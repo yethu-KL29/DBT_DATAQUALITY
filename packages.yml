@@ -1,0 +1,5 @@
+packages:
+  - package: Divergent-Insights/dbt_dataquality
+    version: 0.3.5
+  - package: calogica/dbt_expectations
+    version: 0.10.3

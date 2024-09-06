@@ -1,0 +1,177 @@
+version: 2
+
+sources:
+  - name: raw_data
+    schema: bronze # Ensure this matches your actual schema name
+    description: "Source for dbt database"
+
+    tables:
+      - name: FACT_RESOURCE_UTILIZATION
+        description: "Table for resource utilization data"
+        columns:
+          - name: resource_utilization_id
+            description: "Primary key for resource utilization"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: time_id
+            description: "Foreign key referencing the time dimension"
+            data_type: integer
+            tests:
+              - not_null
+          - name: employee_id
+            description: "Foreign key referencing the employee dimension"
+            data_type: integer
+            tests:
+              - not_null
+          - name: project_id
+            description: "Foreign key referencing the project dimension"
+            data_type: integer
+            tests:
+              - not_null
+          - name: department_id
+            description: "Foreign key referencing the department dimension"
+            data_type: integer
+            tests:
+              - not_null
+          - name: utilization_hours
+            description: "Number of hours utilized by the resource"
+            data_type: float
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
+                  max_value: 24
+          - name: utilization_percentage
+            description: "Percentage of time utilized by the resource"
+            data_type: float
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
+                  max_value: 100
+          - name: active
+            description: "Indicates whether the resource is currently active"
+            data_type: boolean
+            tests:
+              - accepted_values:
+                  values: [true, false]
+
+      - name: DIM_TIME
+        description: "Table for time dimensions"
+        columns:
+          - name: time_id
+            description: "Primary key for time dimension"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: date
+            description: "Date in YYYY-MM-DD format"
+            data_type: date
+            tests:
+              - dbt_expectations.expect_column_values_to_match_regex:
+                  regex: '\d{4}-\d{2}-\d{2}' # YYYY-MM-DD format
+          - name: day_of_week
+            description: "Day of the week (e.g., Monday)"
+            data_type: string
+          - name: month
+            description: "Month of the year"
+            data_type: string
+          - name: quarter
+            description: "Quarter of the year"
+            data_type: integer
+          - name: year
+            description: "Year"
+            data_type: integer
+          - name: week_of_year
+            description: "Week number in the year"
+            data_type: integer
+
+      - name: DIM_EMPLOYEE
+        description: "Table for employee details"
+        columns:
+          - name: employee_id
+            description: "Primary key for employee"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: employee_name
+            description: "Full name of the employee"
+            data_type: string
+          - name: job_title
+            description: "Job title of the employee"
+            data_type: string
+          - name: hire_date
+            description: "Hire date of the employee in YYYY-MM-DD format"
+            data_type: date
+            tests:
+              - dbt_expectations.expect_column_values_to_match_regex:
+                  regex: '\d{4}-\d{2}-\d{2}' # YYYY-MM-DD format
+          - name: department_id
+            description: "Foreign key referencing the department dimension"
+            data_type: integer
+            tests:
+              - not_null
+          - name: location
+            description: "Location of the employee"
+            data_type: string
+
+      - name: DIM_PROJECT
+        description: "Table for project details"
+        columns:
+          - name: project_id
+            description: "Primary key for project"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: project_name
+            description: "Name of the project"
+            data_type: string
+          - name: start_date
+            description: "Start date of the project in YYYY-MM-DD format"
+            data_type: date
+            tests:
+              - dbt_expectations.expect_column_values_to_match_regex:
+                  regex: '\d{4}-\d{2}-\d{2}' # YYYY-MM-DD format
+          - name: end_date
+            description: "End date of the project in YYYY-MM-DD format"
+            data_type: date
+            tests:
+              - dbt_expectations.expect_column_values_to_match_regex:
+                  regex: '\d{4}-\d{2}-\d{2}' # YYYY-MM-DD format
+          - name: project_manager_id
+            description: "Foreign key referencing the employee dimension for the project manager"
+            data_type: integer
+            tests:
+              - not_null
+          - name: budget
+            description: "Budget allocated for the project"
+            data_type: float
+            tests:
+              - dbt_expectations.expect_column_values_to_be_greater_than:
+                  value: 0
+
+      - name: DIM_DEPARTMENT
+        description: "Table for department details"
+        columns:
+          - name: department_id
+            description: "Primary key for department"
+            data_type: integer
+            tests:
+              - unique
+              - not_null
+          - name: department_name
+            description: "Name of the department"
+            data_type: string
+            tests:
+              - not_null
+          - name: location
+            description: "Location of the department"
+            data_type: string
+          - name: head_of_department_id
+            description: "Foreign key referencing the employee dimension for the head of the department"
+            data_type: integer
+            tests:
+              - not_null

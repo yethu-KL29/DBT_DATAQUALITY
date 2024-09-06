@@ -1,0 +1,137 @@
+version: 2
+
+models:
+  - name: resource_utilization
+    description: "Table for resource utilization data"
+    columns:
+      - name: resource_utilization_id
+        description: "Primary key for resource utilization"
+        tests:
+          - unique
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: time_id
+        tests:
+          - dbt_expectations.expect_column_values_to_not_be_null
+          - relationships:
+              to: ref('time')
+              field: time_id
+      - name: employee_id
+        tests:
+          - dbt_expectations.expect_column_values_to_not_be_null
+          - relationships:
+              to: ref('employee')
+              field: employee_id
+      - name: project_id
+        tests:
+          - dbt_expectations.expect_column_values_to_not_be_null
+          - relationships:
+              to: ref('project')
+              field: project_id
+      - name: department_id
+        tests:
+          - dbt_expectations.expect_column_values_to_not_be_null
+          - relationships:
+              to: ref('department')
+              field: department_id
+      - name: utilization_hours
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 24
+      - name: utilization_percentage
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 100
+      - name: active
+        tests:
+          - accepted_values:
+              values: [true, false]
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: [true, false]
+
+  - name: time
+    description: "Table for time dimensions"
+    columns:
+      - name: time_id
+        description: "Primary key for time dimension"
+        tests:
+          - unique
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: date
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d{4}-\d{2}-\d{2}' # YYYY-MM-DD format
+      - name: day_of_week
+      - name: month
+      - name: quarter
+      - name: year
+      - name: week_of_year
+
+  - name: employee
+    description: "Table for employee details"
+    columns:
+      - name: employee_id
+        description: "Primary key for employee"
+        tests:
+          - unique
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: employee_name
+        tests:
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: job_title
+      - name: hire_date
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d{4}-\d{2}-\d{2}' # YYYY-MM-DD format
+      - name: department_id
+        tests:
+          - dbt_expectations.expect_column_values_to_not_be_null
+          - relationships:
+              to: ref('department')
+              field: department_id
+      - name: location
+
+  - name: project
+    description: "Table for project details"
+    columns:
+      - name: project_id
+        description: "Primary key for project"
+        tests:
+          - unique
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: project_name
+        tests:
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: start_date
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d{4}-\d{2}-\d{2}' # YYYY-MM-DD format
+      - name: end_date
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d{4}-\d{2}-\d{2}' # YYYY-MM-DD format
+      - name: project_manager_id
+        tests:
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: budget
+        tests:
+          - dbt_expectations.expect_column_values_to_be_greater_than:
+              value: 0
+
+  - name: department
+    description: "Table for department details"
+    columns:
+      - name: department_id
+        description: "Primary key for department"
+        tests:
+          - unique
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: department_name
+        tests:
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: location
+      - name: head_of_department_id
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_not_be_null

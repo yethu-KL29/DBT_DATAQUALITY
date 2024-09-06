@@ -1,0 +1,10 @@
+packages:
+  - package: Divergent-Insights/dbt_dataquality
+    version: 0.3.5
+  - package: calogica/dbt_expectations
+    version: 0.10.3
+  - package: dbt-labs/dbt_utils
+    version: 0.8.2
+  - package: calogica/dbt_date
+    version: 0.10.1
+sha1_hash: bd0a860a72649b55e2f74e582f6f6fb03893bb3c

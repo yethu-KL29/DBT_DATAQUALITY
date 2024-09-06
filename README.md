@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # dbt Manifest Visualizations
 
 This project provides visualizations for a dbt (Data Build Tool) manifest file, using various Seaborn plots and a table representation for data quality metrics. The visualizations help in understanding the structure, performance, and quality of your dbt models.
@@ -118,3 +119,20 @@ Below is the HTML code used to display these visualizations:
     </div>
 </body>
 </html>
+=======
+Welcome to your new dbt project!
+
+### Using the starter project
+
+Try running the following commands:
+- dbt run
+- dbt test
+
+
+### Resources:
+- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
+- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
+- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
+- Find [dbt events](https://events.getdbt.com) near you
+- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+>>>>>>> af913b6 (data quality updated)
